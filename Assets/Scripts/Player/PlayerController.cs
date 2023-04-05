@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour
     // Makes the player warparound when leaving the screen
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag.Contains("PlayArea"))
+        if (other.tag.Contains(Tags.PLAYAREA))
         {
             if (Mathf.Abs(transform.position.x) > other.transform.lossyScale.x / 2)
             {
@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
     // Game over :(
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.transform.tag.Contains("Meteor"))
+        if (other.transform.tag.Contains(Tags.METEOR))
         {
             EventManager.Instance.OnPlayerHit.Invoke();
             // Hides all projectiles

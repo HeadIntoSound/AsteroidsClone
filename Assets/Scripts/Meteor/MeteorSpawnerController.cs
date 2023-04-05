@@ -7,6 +7,7 @@ public class MeteorSpawnerController : MonoBehaviour
     public float spawnInterval = 2;                                         // Time between meteors spawn
     [SerializeField] float meteorSpeed = 5;                                 // Speed at which the meteors will be launched
     float lastSpawn;                                                        // A reference to the last time a meteor was spawned
+    // Enum with the margins in which the meteor can spawn
     enum SpawnPoint
     {
         Top,
@@ -14,7 +15,6 @@ public class MeteorSpawnerController : MonoBehaviour
         Right,
         Left
     }
-
 
     void Start()
     {
