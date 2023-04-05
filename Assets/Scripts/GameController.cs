@@ -11,7 +11,9 @@ public class GameController : MonoBehaviour
     {
         if (Instance == null)
             Instance = this;
-        
+        else
+            Destroy(this.gameObject);
+
         EventManager.Instance.OnPlayerHit.AddListener(EndGame);
     }
 

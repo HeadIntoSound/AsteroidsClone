@@ -11,19 +11,19 @@ public class MeteorController : MonoBehaviour
     // Controls behaviour when destroyed
     void OnHit()
     {
+        // Awards points
+        GameController.Instance.points += value;
+
         rb.velocity = Vector2.zero;
-        
+
         // Triggers an event that will set inactive this gameobject
         EventManager.Instance.OnMeteorHit.Invoke(this);
-        
+
         // Tells the spawner to spawn smaller meteors where this meteor was
         if (isBig)
         {
             EventManager.Instance.OnMeteorFragment.Invoke(transform.position, meteorsToSpawn);
         }
-
-        // Awards points
-        GameController.Instance.points += value;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

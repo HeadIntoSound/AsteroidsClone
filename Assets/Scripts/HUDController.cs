@@ -16,11 +16,13 @@ public class HUDController : MonoBehaviour
     void Start()
     {
         EventManager.Instance.OnPlayerHit.AddListener(GameOver);
+        EventManager.Instance.OnMeteorHit.AddListener(UpdateScore);
     }
 
     void OnDestroy()
     {
         EventManager.Instance.OnPlayerHit.RemoveListener(GameOver);
+        EventManager.Instance.OnMeteorHit.RemoveListener(UpdateScore);
     }
 
     // Starts the countdown
@@ -49,12 +51,22 @@ public class HUDController : MonoBehaviour
         gameOverPanel.SetActive(false);
     }
 
+    // Sets the score
+    void UpdateScore(MeteorController m)
+    {
+        points.text = GameController.Instance.points.ToString();
+    }
+
+    // Sets the time
+    void Timer()
+    {
+        var t = TimeSpan.FromSeconds((double)Time.time);
+        time.text = string.Format("{0:00}:{1:00}", t.Minutes, t.Seconds);
+    }
+
     // Updates the points and time
     void Update()
     {
-        points.text = GameController.Instance.points.ToString();
-        
-        var t = TimeSpan.FromSeconds((double)Time.time);
-        time.text = string.Format("{0:00}:{1:00}", t.Minutes, t.Seconds);
+        Timer();
     }
 }

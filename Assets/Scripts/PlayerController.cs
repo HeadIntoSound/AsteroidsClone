@@ -34,51 +34,64 @@ public class PlayerController : MonoBehaviour
     }
 
     // Inputs, movement and shooting
-    void FixedUpdate()
+    void Update()
     {
-        dir = front.position - transform.position;
-
         // Moves forward
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + dir, Time.deltaTime * moveSpeed);
+            Move(1);
         }
         // Moves backwards
         if (Input.GetKey(KeyCode.S))
         {
-            transform.position = Vector3.MoveTowards(transform.position, transform.position - dir, Time.deltaTime * moveSpeed);
+            Move(-1);
         }
-
-        // The ship only moves forward or backwards and rotates when trying to turn left or right
+        // Rotates to the right
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(0, 0, -Time.deltaTime * rotationSpeed, Space.Self);
+            Rotate(-1);
         }
+        // Rotates to the left
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(0, 0, Time.deltaTime * rotationSpeed, Space.Self);
+            Rotate(1);
         }
-    }
-
-    void Update()
-    {
         // Shoots the projectiles
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            // Brings the first unused projectile, sets its position and rotation
-            var proj = projectiles[0];
-            proj.velocity = Vector2.zero;
-            proj.transform.rotation = transform.rotation;
-            proj.transform.position = front.position;
-            proj.gameObject.SetActive(true);
-
-            // Fires the projectile
-            proj.AddForce((proj.transform.position - transform.position) * projSpeed, ForceMode2D.Impulse);
-
-            // Moves the fired projectile to the end of the list, so the next projectile is one that's inactive
-            projectiles.RemoveAt(0);
-            projectiles.Add(proj);
+            Fire();
         }
+    }
+
+    // Moves the ship, facing is either 1 for forward or -1 for backwards
+    void Move(int facing)
+    {
+        dir = front.position - transform.position;
+        transform.position = Vector3.MoveTowards(transform.position, transform.position + facing * dir, Time.deltaTime * moveSpeed);
+    }
+
+    // The ship only moves forward or backwards and rotates when trying to turn left or right, facing tells the direction in which the ship rotates
+    void Rotate(int facing)
+    {
+        transform.Rotate(0, 0, facing * Time.deltaTime * rotationSpeed, Space.Self);
+    }
+
+    // Shoots the projectiles
+    void Fire()
+    {
+        // Brings the first unused projectile, sets its position and rotation
+        var proj = projectiles[0];
+        proj.velocity = Vector2.zero;
+        proj.transform.rotation = transform.rotation;
+        proj.transform.position = front.position;
+        proj.gameObject.SetActive(true);
+
+        // Fires the projectile
+        proj.AddForce((proj.transform.position - transform.position) * projSpeed, ForceMode2D.Impulse);
+
+        // Moves the fired projectile to the end of the list, so the next projectile is one that's inactive
+        projectiles.RemoveAt(0);
+        projectiles.Add(proj);
     }
 
     // Makes the player warparound when leaving the screen

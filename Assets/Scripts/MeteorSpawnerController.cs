@@ -7,6 +7,14 @@ public class MeteorSpawnerController : MonoBehaviour
     public float spawnInterval = 2;                                         // Time between meteors spawn
     [SerializeField] float meteorSpeed = 5;                                 // Speed at which the meteors will be launched
     float lastSpawn;                                                        // A reference to the last time a meteor was spawned
+    enum SpawnPoint
+    {
+        Top,
+        Bottom,
+        Right,
+        Left
+    }
+
 
     void Start()
     {
@@ -23,49 +31,27 @@ public class MeteorSpawnerController : MonoBehaviour
         // Spawns the meteors in random places around the edges of the screen
         if (Time.time <= 0 || Time.time > lastSpawn + spawnInterval)
         {
-            Vector2 spawnPoint = Vector2.zero;
-
-            // Searches an inactive meteor in the pool, if there isn't one available, skips the spawn until there's one
-            var meteor = MeteorPool.Instance.PopBigInactive();
-            if (meteor == null)
-                return;
-
-            // Chooses in which margin the meteor will spawn
-            float chance = Random.Range(0, 3);
-            // Spawns anywhere along the top margin
-            if (chance == 0)
-            {
-                float spawnX = Random.Range(-playArea.lossyScale.x / 2, playArea.lossyScale.x / 2);
-                spawnPoint = new Vector3(spawnX, playArea.lossyScale.y / 2, 0);
-            }
-            // Spawns anywhere along the bottom margin
-            if (chance == 1)
-            {
-                float spawnX = Random.Range(-playArea.lossyScale.x / 2, playArea.lossyScale.x / 2);
-                spawnPoint = new Vector3(spawnX, -playArea.lossyScale.y / 2, 0);
-            }
-            // Spawns anywhere along the right margin
-            if (chance == 2)
-            {
-                float spawnY = Random.Range(-playArea.lossyScale.y / 2, playArea.lossyScale.y / 2);
-                spawnPoint = new Vector3(playArea.lossyScale.x / 2, spawnY, 0);
-            }
-            // Spawns anywhere along the left margin
-            if (chance == 3)
-            {
-                float spawnY = Random.Range(-playArea.lossyScale.y / 2, playArea.lossyScale.y / 2);
-                spawnPoint = new Vector3(-playArea.lossyScale.x / 2, spawnY, 0);
-            }
-
-            // Sets position and resets velocity to avoid launching it too fast or too slow
-            meteor.transform.position = spawnPoint;
-            meteor.rb.velocity = Vector2.zero;
-
-            // Launches the meteor in a random direction (the direction is normalied to launch all meteors equally)
-            meteor.rb.AddForce((RandomPoint(3) - spawnPoint).normalized * meteorSpeed, ForceMode2D.Impulse);
-
-            lastSpawn = Time.time;
+            Spawn();
         }
+    }
+
+    void Spawn()
+    {
+        // Searches an inactive meteor in the pool, if there isn't one available, skips the spawn until there's one
+        var meteor = MeteorPool.Instance.PopBigInactive();
+        if (meteor == null)
+            return;
+
+        Vector2 spawnPoint = GetSpawnPoint();
+
+        // Sets position and resets velocity to avoid launching it too fast or too slow
+        meteor.transform.position = spawnPoint;
+        meteor.rb.velocity = Vector2.zero;
+
+        // Launches the meteor in a random direction (the direction is normalied to launch all meteors equally)
+        meteor.rb.AddForce((RandomPoint(3.5f) - spawnPoint).normalized * meteorSpeed, ForceMode2D.Impulse);
+
+        lastSpawn = Time.time;
     }
 
     // Spawn fragments of meteors when a big meteor is destroyed by the player, using the same mechanism as above
@@ -81,6 +67,27 @@ public class MeteorSpawnerController : MonoBehaviour
 
             meteor.transform.position = initialPoint;
             meteor.rb.AddForce((RandomPoint() - initialPoint).normalized * meteorSpeed * 1.75f, ForceMode2D.Impulse);
+        }
+    }
+
+    // Chooses randomly in which margin the meteor will spawn, then returns the exact point along one of them. Defaults at top center
+    Vector2 GetSpawnPoint()
+    {
+        float spawnX = Random.Range(-playArea.lossyScale.x / 2, playArea.lossyScale.x / 2);
+        float spawnY = Random.Range(-playArea.lossyScale.y / 2, playArea.lossyScale.y / 2);
+        
+        switch ((SpawnPoint)Random.Range(0, 4))
+        {
+            case SpawnPoint.Top:
+                return new Vector2(spawnX, playArea.lossyScale.y / 2);
+            case SpawnPoint.Bottom:
+                return new Vector2(spawnX, -playArea.lossyScale.y / 2);
+            case SpawnPoint.Right:
+                return new Vector2(playArea.lossyScale.x / 2, spawnY);
+            case SpawnPoint.Left:
+                return new Vector2(-playArea.lossyScale.x / 2, spawnY);
+            default:
+                return new Vector2(0, playArea.lossyScale.y / 2);
         }
     }
 

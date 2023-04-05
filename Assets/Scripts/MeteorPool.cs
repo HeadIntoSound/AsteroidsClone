@@ -16,6 +16,8 @@ public class MeteorPool : MonoBehaviour
     {
         if (Instance == null)
             Instance = this;
+        else
+            Destroy(this.gameObject);
     }
 
     // This makes it so when a meteor is hit is moved to the inactive list, and when is spawned is moved to the active list
