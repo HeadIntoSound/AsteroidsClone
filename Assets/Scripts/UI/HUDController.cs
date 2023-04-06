@@ -12,7 +12,8 @@ public class HUDController : MonoBehaviour
     [SerializeField] TMP_Text countdown;                                // The countdown text when the game is over
     [SerializeField] TMP_Text gameOverPoints;                           // Score count text in the game over panel
     [SerializeField] TMP_Text gameOverTime;                             // Clock text in the game over panel
-    [SerializeField] GameObject startPanel;                                // Elements that appear when you start the game
+    [SerializeField] GameObject startPanel;                             // Elements that appear when you start the game
+    [SerializeField] GameObject pauseText;                              // The text that appears when you pause the game
     float initialTime;                                                  // The moment of the last game over
 
     void Start()
@@ -20,6 +21,23 @@ public class HUDController : MonoBehaviour
         EventManager.Instance.OnPlayerHit.AddListener(GameOver);
         EventManager.Instance.OnMeteorHit.AddListener(UpdateScore);
         EventManager.Instance.OnRestartGame.AddListener(ResetHUD);
+        EventManager.Instance.OnPauseGame.AddListener(Pause);
+    }
+
+
+
+    void OnDestroy()
+    {
+        EventManager.Instance.OnPlayerHit.RemoveListener(GameOver);
+        EventManager.Instance.OnMeteorHit.RemoveListener(UpdateScore);
+        EventManager.Instance.OnRestartGame.RemoveListener(ResetHUD);
+        EventManager.Instance.OnPauseGame.RemoveListener(Pause);
+    }
+
+    // Triggers when the game is paused
+    void Pause(bool isPaused)
+    {
+        pauseText.SetActive(isPaused);
     }
 
     // Sets the HUD to the initial values
@@ -31,13 +49,6 @@ public class HUDController : MonoBehaviour
         points.gameObject.SetActive(true);
         time.gameObject.SetActive(true);
         gameOverPanel.SetActive(false);
-    }
-
-    void OnDestroy()
-    {
-        EventManager.Instance.OnPlayerHit.RemoveListener(GameOver);
-        EventManager.Instance.OnMeteorHit.RemoveListener(UpdateScore);
-        EventManager.Instance.OnRestartGame.RemoveListener(ResetHUD);
     }
 
     // Starts the countdown

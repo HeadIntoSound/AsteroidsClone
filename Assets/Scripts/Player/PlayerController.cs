@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] List<Rigidbody2D> projectiles = new List<Rigidbody2D>();       // A list of projectiles. To avoid performance issues, the ammo is
                                                                                     // limited to a set amount of projectiles that will be reused.
                                                                                     // This amount can be changed in the editor
+    bool paused = false;                                                            // Is the game paused?
 
     void Start()
     {
@@ -62,6 +63,14 @@ public class PlayerController : MonoBehaviour
         {
             Fire();
         }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Pause();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Quit();
+        }
     }
 
     // Moves the ship, facing is either 1 for forward or -1 for backwards
@@ -95,6 +104,24 @@ public class PlayerController : MonoBehaviour
         // Moves the fired projectile to the end of the list, so the next projectile is one that's inactive
         projectiles.RemoveAt(0);
         projectiles.Add(proj);
+    }
+
+    // Closes the game
+    void Quit()
+    {
+        Application.Quit();
+    }
+
+    // Pauses the game
+    void Pause()
+    {
+        // If not enough time has passed since the start of the game, you can't pause
+        if (Time.time <= 0.01f)
+            return;
+        
+        Time.timeScale = paused ? 1 : 0;
+        paused = !paused;
+        EventManager.Instance.OnPauseGame.Invoke(paused);
     }
 
     // Makes the player warparound when leaving the screen

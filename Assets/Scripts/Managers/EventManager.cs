@@ -26,6 +26,10 @@ public class EventManager : MonoBehaviour
     public class RestartGame : UnityEvent { }
     public RestartGame OnRestartGame = new RestartGame();
 
+    // Used when the game is paused
+    public class PauseGame : UnityEvent<bool> { }
+    public PauseGame OnPauseGame = new PauseGame();
+
     private void Awake()
     {
         if (Instance == null)
