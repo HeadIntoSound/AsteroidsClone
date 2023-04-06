@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,22 +38,22 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Moves forward
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             Move(1);
         }
         // Moves backwards
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             Move(-1);
         }
         // Rotates to the right
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             Rotate(-1);
         }
         // Rotates to the left
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             Rotate(1);
         }
@@ -79,6 +80,8 @@ public class PlayerController : MonoBehaviour
     // Shoots the projectiles
     void Fire()
     {
+        if (Time.timeScale == 0)
+            return;
         // Brings the first unused projectile, sets its position and rotation
         var proj = projectiles[0];
         proj.velocity = Vector2.zero;

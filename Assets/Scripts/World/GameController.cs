@@ -7,6 +7,12 @@ public class GameController : MonoBehaviour
     public static GameController Instance;                                      // A singleton
     public int points;                                                          // Player's points
 
+    void Awake()
+    {
+        Time.timeScale = 0;
+        StartCoroutine(StartGame());
+    }
+
     void Start()
     {
         if (Instance == null)
@@ -17,7 +23,7 @@ public class GameController : MonoBehaviour
         EventManager.Instance.OnPlayerHit.AddListener(EndGame);
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         EventManager.Instance.OnPlayerHit.RemoveListener(EndGame);
     }
@@ -35,6 +41,14 @@ public class GameController : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(5);
         points = 0;
+        Time.timeScale = 1;
+        EventManager.Instance.OnRestartGame.Invoke();
+    }
+
+    // Starts the game
+    IEnumerator StartGame()
+    {
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         Time.timeScale = 1;
         EventManager.Instance.OnRestartGame.Invoke();
     }

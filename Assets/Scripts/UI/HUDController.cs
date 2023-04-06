@@ -12,18 +12,32 @@ public class HUDController : MonoBehaviour
     [SerializeField] TMP_Text countdown;                                // The countdown text when the game is over
     [SerializeField] TMP_Text gameOverPoints;                           // Score count text in the game over panel
     [SerializeField] TMP_Text gameOverTime;                             // Clock text in the game over panel
-    float initialTime;                                                     // The moment of the last game over
+    [SerializeField] GameObject startPanel;                                // Elements that appear when you start the game
+    float initialTime;                                                  // The moment of the last game over
 
     void Start()
     {
         EventManager.Instance.OnPlayerHit.AddListener(GameOver);
         EventManager.Instance.OnMeteorHit.AddListener(UpdateScore);
+        EventManager.Instance.OnRestartGame.AddListener(ResetHUD);
+    }
+
+    // Sets the HUD to the initial values
+    void ResetHUD()
+    {
+        initialTime = Time.time;
+        points.text = "000000";
+        startPanel.SetActive(false);
+        points.gameObject.SetActive(true);
+        time.gameObject.SetActive(true);
+        gameOverPanel.SetActive(false);
     }
 
     void OnDestroy()
     {
         EventManager.Instance.OnPlayerHit.RemoveListener(GameOver);
         EventManager.Instance.OnMeteorHit.RemoveListener(UpdateScore);
+        EventManager.Instance.OnRestartGame.RemoveListener(ResetHUD);
     }
 
     // Starts the countdown
@@ -35,7 +49,6 @@ public class HUDController : MonoBehaviour
     // Hides unnecessary info, shows the panel, makes the count down and reverts everything once finished
     IEnumerator RestartCountdown()
     {
-        initialTime = Time.time;
         gameOverPanel.SetActive(true);
         gameOverPoints.text = points.text;
         gameOverTime.text = time.text;
@@ -48,10 +61,6 @@ public class HUDController : MonoBehaviour
             yield return new WaitForSecondsRealtime(1);
             t--;
         }
-        points.text = "000000";
-        points.gameObject.SetActive(true);
-        time.gameObject.SetActive(true);
-        gameOverPanel.SetActive(false);
     }
 
     // Sets the score

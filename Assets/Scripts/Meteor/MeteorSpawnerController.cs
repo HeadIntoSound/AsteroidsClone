@@ -18,18 +18,21 @@ public class MeteorSpawnerController : MonoBehaviour
 
     void Start()
     {
+        ResetLastSpawn();
+        EventManager.Instance.OnRestartGame.AddListener(ResetLastSpawn);
         EventManager.Instance.OnMeteorFragment.AddListener(FragmentMeteor);
     }
 
     void OnDestroy()
     {
+        EventManager.Instance.OnRestartGame.RemoveListener(ResetLastSpawn);
         EventManager.Instance.OnMeteorFragment.RemoveListener(FragmentMeteor);
     }
 
     void Update()
     {
         // Spawns the meteors in random places around the edges of the screen
-        if (Time.time <= 0 || Time.time > lastSpawn + spawnInterval)
+        if (Time.time > lastSpawn + spawnInterval)
         {
             Spawn();
         }
@@ -70,12 +73,18 @@ public class MeteorSpawnerController : MonoBehaviour
         }
     }
 
+    void ResetLastSpawn()
+    {
+        // Makes it so the first spawn is always 1 second into the game
+        lastSpawn = Time.time + 1 - spawnInterval;
+    }
+
     // Chooses randomly in which margin the meteor will spawn, then returns the exact point along one of them. Defaults at top center
     Vector2 GetSpawnPoint()
     {
         float spawnX = Random.Range(-playArea.lossyScale.x / 2, playArea.lossyScale.x / 2);
         float spawnY = Random.Range(-playArea.lossyScale.y / 2, playArea.lossyScale.y / 2);
-        
+
         switch ((SpawnPoint)Random.Range(0, 4))
         {
             case SpawnPoint.Top:
