@@ -12,7 +12,7 @@ public class HUDController : MonoBehaviour
     [SerializeField] TMP_Text countdown;                                // The countdown text when the game is over
     [SerializeField] TMP_Text gameOverPoints;                           // Score count text in the game over panel
     [SerializeField] TMP_Text gameOverTime;                             // Clock text in the game over panel
-    float stopTime;                                                     // The moment of the last game over
+    float initialTime;                                                     // The moment of the last game over
 
     void Start()
     {
@@ -35,7 +35,7 @@ public class HUDController : MonoBehaviour
     // Hides unnecessary info, shows the panel, makes the count down and reverts everything once finished
     IEnumerator RestartCountdown()
     {
-        stopTime = Time.time;
+        initialTime = Time.time;
         gameOverPanel.SetActive(true);
         gameOverPoints.text = points.text;
         gameOverTime.text = time.text;
@@ -63,7 +63,7 @@ public class HUDController : MonoBehaviour
     // Sets the time
     void Timer()
     {
-        var t = TimeSpan.FromSeconds((double)Time.time - stopTime);
+        var t = TimeSpan.FromSeconds((double)Time.time - initialTime);
         time.text = string.Format("{0:00}:{1:00}", t.Minutes, t.Seconds);
     }
 

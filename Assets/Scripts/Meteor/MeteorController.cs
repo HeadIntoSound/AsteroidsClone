@@ -26,7 +26,7 @@ public class MeteorController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         // If being hit by a projectile
         if (other.tag.Contains(Tags.PROJECTILE))
@@ -36,7 +36,7 @@ public class MeteorController : MonoBehaviour
     }
 
     // Makes the meteor warparound when leaving the screen
-    private void OnTriggerExit2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.tag.Contains(Tags.PLAYAREA))
         {

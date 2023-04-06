@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Makes the player warparound when leaving the screen
-    private void OnTriggerExit2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.tag.Contains(Tags.PLAYAREA))
         {
@@ -111,7 +111,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Game over :(
-    private void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
         if (other.transform.tag.Contains(Tags.METEOR))
         {
